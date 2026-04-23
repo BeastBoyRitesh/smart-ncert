@@ -14,6 +14,22 @@ app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app)
 
+load_dotenv()  # read .env file
+
+app.config["GEMINI_API_KEY"] = (
+    os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+)
+
+if not app.config.get("GEMINI_API_KEY"):
+    print("⚠️ WARNING: GEMINI_API_KEY is missing. AI Quiz generation will not work.")
+else:
+    key = str(app.config["GEMINI_API_KEY"])
+    if len(key) > 8:
+        masked = key[:4] + "..." + key[-4:]
+    else:
+        masked = "*****"
+    print(f"# GEMINI_API_KEY is active: {masked}")
+
 # Set maximum upload size to 50MB
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
