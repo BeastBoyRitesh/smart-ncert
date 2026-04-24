@@ -97,9 +97,15 @@ def index():
 @app.route("/login/student", methods=["GET", "POST"])
 def login_student():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        
+       # .strip() removes accidental spaces at the start or end
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+
+        # Added a check to make sure they aren't empty
+        if not username or not password:
+            flash("Please enter both username and password", "warning")
+            return render_template("login_student.html")
+
         user = db.users.find_one({"username": username, "password": password})
         if user:
             session["role"] = "student"
